@@ -32,11 +32,11 @@ data RBinOp = Equal
               deriving (Show)
 
 data Stm = Seq [Stm]
-            | Assign String Aexp
-            | If Bexp Stm Stm
-            | While Bexp Stm
-            | End Stm
-            deriving (Show)
+           | Assign String Aexp
+           | If Bexp Stm Stm
+           | While Bexp Stm
+           | End Stm
+           deriving (Show)
 
 language =
     emptyDef {
@@ -67,7 +67,7 @@ sequenceOfStm = do
     stms <- sepEndBy1 statement' semi
     return $ case stms of
         [stm] -> stm
-        _      -> Seq stms
+        _     -> Seq stms
 
 statement' :: Parser Stm
 statement' = ifParser
@@ -75,10 +75,10 @@ statement' = ifParser
             <|> assignParser
 
 ifParser :: Parser Stm
-ifParser = If <$> (reserved "if" *> bExpr) <*> (reserved "then" *> statement) <*> (reserved "else" *> statement)
+ifParser = If <$> (reserved "if" *> bExpr) <*> (reserved "then" *> (parens statement <|> statement' <* semi)) <*> (reserved "else" *> (parens statement <|> statement'))
 
 whileParser :: Parser Stm
-whileParser = While <$> (reserved "while" *> bExpr) <*> (reserved "do" *> statement)
+whileParser = While <$> (reserved "while" *> bExpr) <*> (reserved "do" *> (parens statement <|> statement'))
 
 assignParser :: Parser Stm
 assignParser = Assign <$> identifier <*> (reservedOp ":=" *> aExpr)
@@ -102,8 +102,7 @@ bExpr = buildExpressionParser bExprOperators bExprTerm
 
 bExprOperators = [ [Prefix (Not <$ reservedOp "not")],
                    [Infix (BBinary BEqual <$ reservedOp "=") AssocLeft],
-                   [Infix (BBinary And <$ reservedOp "and") AssocLeft]
-                ]
+                   [Infix (BBinary And <$ reservedOp "and") AssocLeft]]
 
 bExprTerm = parens bExpr <|> boolParser <|> rExpr
 
