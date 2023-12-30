@@ -12,7 +12,7 @@ Our group is T09_G11
 
 ## Installation and Usage
 
-To use this library you should use GHCI to load the file Main.hs in the src folder. It contains 2 functions to test the assembler, `testAssembler` and the parser, `testParser`.
+To use this library you should use GHCI to load the file Main.hs in the src folder. You should have parsec installed, on a standard installation of haskell running `cabal install parsec` should be enough. It contains 2 functions to test the assembler, `testAssembler` and the parser, `testParser`.
 
 ## Description
 
